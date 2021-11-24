@@ -17,12 +17,13 @@ if __name__ == "__main__":
         f.write(df)
 
     if args.run:
-        spr = run(["docker", "build", "-t", "moirai", "."], cwd=args.output.parent)
+        # USE BUILDKIT IF YOU DONT HATE YOURSELF!
+        spr = run(["docker", "build", "-t", "moirai", "."], cwd=args.output.parent, env={"DOCKER_BUILDKIT": "1"})
         spr.check_returncode()
-        spr = run(["docker", "create", "moirai:latest"], cwd=args.output.parent, capture_output=True)
+        spr = run(["docker", "build", "-t", "moirai", "."], cwd=args.output.parent, capture_output=True, env={"DOCKER_BUILDKIT": "1"})
         spr.check_returncode()
         did = spr.stdout.decode("utf-8").strip()
-        spr = run(["docker", "cp", f"{did}:/output", "."], cwd=args.output.parent)
+        spr = run(["docker", "build", "-t", "moirai", "."], cwd=args.output.parent, env={"DOCKER_BUILDKIT": "1"})
         spr.check_returncode()
     
     if args.parse:
